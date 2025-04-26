@@ -180,6 +180,7 @@
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProductoController.cs" />
+    <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Dao\DaoImpl\ProductoDaoImpl.cs" />
     <Compile Include="Dao\DaoImpl\UsuarioDaoImpl.cs" />
@@ -190,6 +191,7 @@
     </Compile>
     <Compile Include="Models\LoginRequest.cs" />
     <Compile Include="Models\Productos.cs" />
+    <Compile Include="Models\UsuarioDTO.cs" />
     <Compile Include="Models\Usuarios.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -261,6 +263,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Usuarios\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\bootstrap.min.js.map" />

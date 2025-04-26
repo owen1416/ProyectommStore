@@ -12,5 +12,7 @@ namespace Proyectommstore.Dao
         int operacionesEscritura(string indicador, Productos objpro);
         List<Productos> operacionesLectura(string indicador, Productos objpro);
 
+
+
     }
 }

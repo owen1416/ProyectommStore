@@ -11,5 +11,11 @@ namespace Proyectommstore.Dao
     {
         Usuarios ObtenerUsuario(string indicador,string NombreUsuario);
         bool VerificarPassword(string passwordIngresado, string passwordAlmacenado);
+
+        int operacionesEscitura(string indicador, Usuarios objusu);
+        List<Usuarios> operacionesLectura(string indicador, Usuarios objusu);
+
+        string HashPassword(string password);
+
     }
 }

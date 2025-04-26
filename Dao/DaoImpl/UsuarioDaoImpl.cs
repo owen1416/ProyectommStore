@@ -1,29 +1,33 @@
 ﻿using Proyectommstore.Models;
+using ProyectommStrore.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web;
 
 namespace Proyectommstore.Dao.DaoImpl
 {
     public class UsuarioDaoImpl : UsuarioDao
     {
+       
         public Usuarios ObtenerUsuario(string indicador, string NombreUsuario)
         {
 
             Usuarios usuario = null;
-          
+
 
             try
             {
-                using(SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
-                { 
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand("usp_usuarios_operaciones", conn))
-                    { 
+                    {
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
                         cmd.Parameters.Clear();
                         cmd.Parameters.AddWithValue("@indicador", indicador);
@@ -33,9 +37,9 @@ namespace Proyectommstore.Dao.DaoImpl
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
 
-                            
 
-                            while(reader.Read())
+
+                            while (reader.Read())
                             {
                                 usuario = new Usuarios
                                 {
@@ -43,10 +47,10 @@ namespace Proyectommstore.Dao.DaoImpl
                                     NombreUsuario = (string)reader["NombreUsuario"],
                                     password = (string)reader["password"]
                                 };
-                                                           
-                            }                                            
-                        }                                 
-                    }                                     
+
+                            }
+                        }
+                    }
                 }
 
             }
@@ -56,16 +60,121 @@ namespace Proyectommstore.Dao.DaoImpl
 
             }
 
-            return usuario; 
+            return usuario;
 
         }
-
 
         public bool VerificarPassword(string passwordIngresado, string passwordAlmacenado)
         {
             // Agrega estas líneas para depuración
-          
+
             return BCrypt.Net.BCrypt.Verify(passwordIngresado, passwordAlmacenado);
         }
+
+
+
+
+
+
+        public int operacionesEscitura(string indicador, Usuarios objusu)
+        {
+            int procesar = -1;
+
+            try
+            {
+
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("usp_usuarios_crud", conn))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@Indicador", indicador);
+                        cmd.Parameters.AddWithValue("@UsuarioID", objusu.UsuarioID);
+                        cmd.Parameters.AddWithValue("@NombreUsuario", objusu.NombreUsuario);
+                        cmd.Parameters.AddWithValue("@password", objusu.password);
+                        cmd.Parameters.AddWithValue("@email", objusu.Email);
+                        procesar = cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                Debug.WriteLine("OperacionesEscritura -Error");
+            }
+
+            return procesar;
+        }
+        public string HashPassword(string password)
+        {
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+            return hashedPassword;
+        }
+
+        public List<Usuarios> operacionesLectura(string indicador, Usuarios objusu)
+        {
+            List<Usuarios> lista = new List<Usuarios>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("usp_usuarios_crud", conn))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@indicador", indicador);
+                        cmd.Parameters.AddWithValue("@UsuarioID", objusu.UsuarioID);
+                        cmd.Parameters.AddWithValue("@NombreUsuario", objusu.NombreUsuario);
+                        cmd.Parameters.AddWithValue("@password", objusu.password);
+                        cmd.Parameters.AddWithValue("@email", objusu.Email);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            Usuarios usu;
+
+                            while (reader.Read())
+                            {
+                                usu = new Usuarios();
+                                usu.UsuarioID = reader.GetInt32(0);
+                                usu.NombreUsuario = reader.GetString(1);
+                                usu.password = reader.GetString(2);
+                                usu.Email = reader.GetString(3);
+                                lista.Add(usu);
+                            }
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("OperacionesLectura -Eror" + ex.ToString());
+            }
+
+            return lista;
+        
     }
+    
+
+      
+    }
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+     
+ 
