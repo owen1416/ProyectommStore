@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Proyectommstore.Models
 {
-    public class UsuarioDTO
+    public class RegistroDTO
     {
         [Required(ErrorMessage = "El nombre de usuario es requerido.")]
         [MaxLength(50, ErrorMessage = "El nombre de usuario no puede tener más de 50 caracteres.")]

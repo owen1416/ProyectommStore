@@ -26,19 +26,19 @@ namespace Proyectommstore.Controllers
        
         [HttpPost]
         [Route("")]
-        public IHttpActionResult Post(UsuarioDTO usuariodto)
+        public IHttpActionResult Post( RegistroDTO registrardto)
         {
 
             // 1. Cifrar la contraseña
-            string cifrado = dao.HashPassword(usuariodto.Contraseña);  
+            string cifrado = dao.HashPassword(registrardto.Contraseña);  
 
             var nuevoUsuario = new Usuarios
             { 
 
               UsuarioID = 0, //la base de datos genera el id automaticamente
-              NombreUsuario = usuariodto.NombreUsuario,
+              NombreUsuario = registrardto.NombreUsuario,
               password = cifrado,
-              Email = usuariodto.Email,
+              Email = registrardto.Email,
             
             
             };
@@ -54,10 +54,22 @@ namespace Proyectommstore.Controllers
             {
                 return BadRequest("Error al registrar el usuario.");
             }
-
-
-
-            
         }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public IHttpActionResult Delete(int id)
+        {
+            return Ok(  dao.operacionesEscitura("eliminar", new Usuarios() { UsuarioID = id}));
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public IHttpActionResult GetId(int id)
+        {
+            var buscar = dao.operacionesLectura("buscar", new Usuarios() { UsuarioID = id}).FirstOrDefault();
+            return Ok(buscar);
+        }
+
     }
 }

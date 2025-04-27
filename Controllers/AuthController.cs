@@ -22,21 +22,21 @@ namespace Proyectommstore.Controllers
 
         [HttpPost]
         [Route("login")]
-        public IHttpActionResult login([FromBody] LoginRequest model)
+        public IHttpActionResult login([FromBody] LoginDTO login)
         {
-            if (!ModelState.IsValid || model == null || string.IsNullOrEmpty(model.NombreUsuario)||string.IsNullOrEmpty(model.password))
+            if (!ModelState.IsValid || login == null || string.IsNullOrEmpty(login.NombreUsuario)||string.IsNullOrEmpty(login.password))
             { 
               return BadRequest("Credenciales invalidas");
             }
 
-            Usuarios usuario = dao.ObtenerUsuario("obtenerusu", model.NombreUsuario);
+            Usuarios usuario = dao.ObtenerUsuario("obtenerusu", login.NombreUsuario);
 
             if (usuario == null)
             {       
               return Unauthorized(); 
             }
 
-            if (dao.VerificarPassword(model.password, usuario.password))
+            if (dao.VerificarPassword(login.password, usuario.password))
             {
                 return Ok(new { Mensaje = "Inicio de sesion exitoso", UsuarioID = usuario.UsuarioID, nombreUsuario = usuario.NombreUsuario });
             }

@@ -64,9 +64,10 @@ namespace Proyectommstore.Dao.DaoImpl
 
         }
 
+        
         public bool VerificarPassword(string passwordIngresado, string passwordAlmacenado)
         {
-            // Agrega estas líneas para depuración
+           
 
             return BCrypt.Net.BCrypt.Verify(passwordIngresado, passwordAlmacenado);
         }
@@ -75,7 +76,7 @@ namespace Proyectommstore.Dao.DaoImpl
 
 
 
-
+        
         public int operacionesEscitura(string indicador, Usuarios objusu)
         {
             int procesar = -1;
@@ -107,10 +108,14 @@ namespace Proyectommstore.Dao.DaoImpl
 
             return procesar;
         }
+        
+
+        //escribir el password en texto plano y que se guarde en Bcrypt en la base de datos
         public string HashPassword(string password)
         {
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
             return hashedPassword;
+
         }
 
         public List<Usuarios> operacionesLectura(string indicador, Usuarios objusu)
