@@ -1,6 +1,7 @@
 ﻿using Proyectommstore.Dao;
 using Proyectommstore.Dao.DaoImpl;
 using Proyectommstore.Models;
+using ProyectommStrore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,8 +22,8 @@ namespace Proyectommstore.Controllers
             _compraService = new CompraServiceImpl();
         }
 
-
-
+ 
+  
 
         [HttpPost]
         [Route("generar")]
@@ -37,18 +38,5 @@ namespace Proyectommstore.Controllers
 
             return Ok(resultado);
         }
-
-        [HttpGet]
-        [Route("producto/{id}")]
-        public IHttpActionResult GetProducto(int id)
-        {
-            var producto = _compraService.GetProductoPorId(id);
-            if (producto == null)
-            {
-                return NotFound();
-            }
-            return Ok(producto);
-        }
-
     }
 }

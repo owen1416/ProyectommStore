@@ -1,4 +1,5 @@
 ﻿using Proyectommstore.Models;
+using ProyectommStrore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,6 @@ namespace Proyectommstore.Dao
 {
     internal interface PedidoDao
     {
-        int OperacionesEscrituraPedido(string indicador, Pedido objPedido);
-        Pedido OperacionesLecturaPedido(string indicador, Pedido objPedido);
-        int OperacionesEscrituraDetallePedido(string indicador, DetallePedido objDetallePedido);
+        List<Pedido> operacionesLectura(string indicador, Pedido objpe);
     }
 }

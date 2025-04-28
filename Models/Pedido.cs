@@ -16,6 +16,7 @@ namespace Proyectommstore.Models
 
         public Pedido()
         {
+          
         }
     
         public Pedido(int pedidoID, int clienteID, DateTime fechaPedido, string estado, decimal total)
@@ -26,5 +27,5 @@ namespace Proyectommstore.Models
             Estado = estado;
             Total = total;
         }
-    }
+    }   
 }

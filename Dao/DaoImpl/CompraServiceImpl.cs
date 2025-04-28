@@ -17,7 +17,7 @@ namespace Proyectommstore.Dao.DaoImpl
     public class CompraServiceImpl : ICompraService
     {
         ProductoDao productoDao = new ProductoDaoImpl();
-        PedidoDao pedidoDao = new PedidoDaoImpl();
+        PedidoCompraDao pedidoDao = new PedidoCompraDaoImpl();
 
 
         public Productos GetProductoPorId(int id)
@@ -26,97 +26,92 @@ namespace Proyectommstore.Dao.DaoImpl
         }
 
 
-        public ResultadoOperacion GenerarCompra(int clienteId, List<ItemCompra> itemsCompra)
-        {
-            if (itemsCompra == null || !itemsCompra.Any() || clienteId <= 0)
+            public PedidoRespuesta GenerarCompra(int clienteId, List<ItemCompra> itemsCompra)
             {
-                return new ResultadoOperacion
+                if (itemsCompra == null || !itemsCompra.Any() || clienteId <= 0)
                 {
-                    Exito = false,
-                    Mensaje = "La lista de items de compra no puede estar vacía y el ClienteId debe ser válido."
-                };
-            }
-
-            decimal totalPedido = 0;
-            var detallesPedido = new List<DetallePedido>();
-            var productosActualizados = new List<Productos>();
-
-            foreach (var item in itemsCompra)
-            {
-                var producto = GetProductoPorId(item.ProductoId);
-                if (producto == null || producto.Stock < item.Cantidad)
-                {
-                    return new ResultadoOperacion
-                    {
+                    return new PedidoRespuesta
+                    {   
                         Exito = false,
-                        Mensaje = $"Stock insuficiente para el producto con ID: {item.ProductoId}"
+                        Mensaje = "La lista de items de compra no puede estar vacía y el ClienteId debe ser válido."
                     };
                 }
 
-                var subtotal = item.Cantidad * producto.Precio;
-                totalPedido += subtotal;
+                decimal totalPedido = 0;
+                var detallesPedido = new List<DetallePedido>();
+                var productosActualizados = new List<Productos>();
 
-                detallesPedido.Add(new DetallePedido
+                foreach (var item in itemsCompra)
                 {
-                    ProductoID = item.ProductoId,
-                    Cantidad = item.Cantidad,
-                    PrecioUnitario = producto.Precio,
-                    Subtotal = subtotal
-                });
+                    var producto = GetProductoPorId(item.ProductoId);
+                    if (producto == null || producto.Stock < item.Cantidad)
+                    {
+                        return new PedidoRespuesta
+                        {
+                            Exito = false,
+                            Mensaje = $"Stock insuficiente para el producto con ID: {item.ProductoId}"
+                        };
+                    }
 
-                productosActualizados.Add(new Productos
+                    var subtotal = item.Cantidad * producto.Precio;
+                    totalPedido += subtotal;
+
+                    detallesPedido.Add(new DetallePedido
+                    {
+                        ProductoID = item.ProductoId,
+                        Cantidad = item.Cantidad,
+                        PrecioUnitario = producto.Precio,
+                        Subtotal = subtotal
+                    });
+
+                    productosActualizados.Add(new Productos
+                    {
+                        ProductoID = producto.ProductoID,
+                        Stock = producto.Stock - item.Cantidad
+                    });
+                }
+
+                var nuevoPedido = new Pedido
                 {
-                    ProductoID = producto.ProductoID,
-                    Stock = producto.Stock - item.Cantidad
-                });
-            }
-
-            var nuevoPedido = new Pedido
-            {
-                ClienteID = clienteId,
-                FechaPedido = DateTime.Now,
-                Estado = "Pendiente",
-                Total = totalPedido
-            };
-
-            int pedidoCreado = pedidoDao.OperacionesEscrituraPedido("insertar", nuevoPedido);
-            if (pedidoCreado <= 0 || nuevoPedido.PedidoID <= 0)
-            {
-                return new ResultadoOperacion
-                {
-                    Exito = false,
-                    Mensaje = "Error al crear el pedido."
+                    ClienteID = clienteId,
+                    FechaPedido = DateTime.Now,
+                    Estado = "Pendiente",
+                    Total = totalPedido
                 };
-            }
 
-            int pedidoId = nuevoPedido.PedidoID;
-
-            foreach (var detalle in detallesPedido)
-            {
-                detalle.PedidoID = pedidoId;
-                int detalleCreado = pedidoDao.OperacionesEscrituraDetallePedido("insertar", detalle);
-                if (detalleCreado <= 0)
+                int pedidoCreado = pedidoDao.OperacionesEscrituraPedido("insertar", nuevoPedido);
+                if (pedidoCreado <= 0 || nuevoPedido.PedidoID <= 0)
                 {
-                    return new ResultadoOperacion
+                    return new PedidoRespuesta
                     {
                         Exito = false,
-                        Mensaje = "Error al crear los detalles del pedido."
+                        Mensaje = "Error al crear el pedido."
                     };
                 }
 
-                var productoActualizar = productosActualizados.FirstOrDefault(p => p.ProductoID == detalle.ProductoID);
-                if (productoActualizar != null)
-                {
-                    productoDao.operacionesEscritura("actualizar_stock", productoActualizar);
-                }
-            }
+                int pedidoId = nuevoPedido.PedidoID;
 
-            return new ResultadoOperacion
-            {
-                Exito = true,
-                Mensaje = "Pedido creado exitosamente.",
-                Datos = nuevoPedido
-            };
+                foreach (var detalle in detallesPedido)
+                {
+                    detalle.PedidoID = pedidoId;
+                    int detalleCreado = pedidoDao.OperacionesEscrituraDetallePedido("insertar", detalle);
+                    if (detalleCreado <= 0)
+                    {
+                        return new PedidoRespuesta
+                        {
+                            Exito = false,
+                            Mensaje = "Error al crear los detalles del pedido."
+                        };
+                    }
+
+                }
+
+                return new PedidoRespuesta
+                {
+                    Exito = true,
+                    Mensaje = "Pedido creado exitosamente.",
+                    Datos = nuevoPedido
+                };
+            }
         }
     }
-}

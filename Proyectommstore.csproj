@@ -175,16 +175,19 @@
     <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\CompraController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PedidoController.cs" />
     <Compile Include="Controllers\ProductoController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Dao\ClientesDao.cs" />
     <Compile Include="Dao\DaoImpl\ClientesDaoImpl.cs" />
     <Compile Include="Dao\DaoImpl\CompraServiceImpl.cs" />
+    <Compile Include="Dao\DaoImpl\PedidoCompraDaoImpl.cs" />
     <Compile Include="Dao\DaoImpl\PedidoDaoImpl.cs" />
     <Compile Include="Dao\DaoImpl\ProductoDaoImpl.cs" />
     <Compile Include="Dao\DaoImpl\UsuarioDaoImpl.cs" />
     <Compile Include="Dao\ICompraService.cs" />
+    <Compile Include="Dao\PedidoCompraDao.cs" />
     <Compile Include="Dao\PedidoDao.cs" />
     <Compile Include="Dao\ProductoDao.cs" />
     <Compile Include="Dao\UsuarioDao.cs" />
@@ -198,7 +201,7 @@
     <Compile Include="Models\Pedido.cs" />
     <Compile Include="Models\Productos.cs" />
     <Compile Include="Models\RegistroDTO.cs" />
-    <Compile Include="Models\ResultadoOperacion.cs" />
+    <Compile Include="Models\PedidoRespuesta.cs" />
     <Compile Include="Models\Usuarios.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

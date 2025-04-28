@@ -1,4 +1,5 @@
 ﻿using Proyectommstore.Models;
+using ProyectommStrore.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -10,123 +11,54 @@ using System.Web;
 namespace Proyectommstore.Dao.DaoImpl
 {
     public class PedidoDaoImpl : PedidoDao
+
     {
-        public int OperacionesEscrituraPedido(string indicador, Pedido objPedido)
+        public List<Pedido> operacionesLectura(string indicador, Pedido objpe)
         {
-            int procesar = -1;
+            List<Pedido> lista = new List<Pedido>();
+
             try
             {
                 using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("usp_pedidos_crud", conn))
+                    using (SqlCommand cmd = new SqlCommand("usp_pedidos_crud2", conn))
                     {
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
                         cmd.Parameters.Clear();
                         cmd.Parameters.AddWithValue("@indicador", indicador);
-                        cmd.Parameters.AddWithValue("@PedidoID", objPedido.PedidoID);
-                        cmd.Parameters.AddWithValue("@ClienteID", objPedido.ClienteID);
-                        cmd.Parameters.AddWithValue("@FechaPedido", objPedido.FechaPedido);
-                        cmd.Parameters.AddWithValue("@Estado", objPedido.Estado);
-                        cmd.Parameters.AddWithValue("@Total", objPedido.Total);
-
-                        if (indicador == "insertar")
-                        {
-                            SqlParameter outputIdParam = new SqlParameter("@PedidoIDOutput", System.Data.SqlDbType.Int);
-                            outputIdParam.Direction = System.Data.ParameterDirection.Output;
-                            cmd.Parameters.Add(outputIdParam);
-
-                            procesar = cmd.ExecuteNonQuery();
-
-                            if (outputIdParam.Value != DBNull.Value)
-                            {
-                                objPedido.PedidoID = Convert.ToInt32(outputIdParam.Value);
-                            }
-                        }
-                        else
-                        {
-                            procesar = cmd.ExecuteNonQuery();
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("OperacionesEscrituraPedido - Error:" + ex.ToString());
-            }
-            return procesar;
-        }
-
-
-
-        public Pedido OperacionesLecturaPedido(string indicador, Pedido objPedido)
-        {
-            Pedido pedido = null;
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
-                {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("usp_pedidos_crud", conn))
-                    {
-                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                        cmd.Parameters.Clear();
-                        cmd.Parameters.AddWithValue("@indicador", indicador);
-                        cmd.Parameters.AddWithValue("@PedidoID", objPedido.PedidoID);
+                        cmd.Parameters.AddWithValue("@PedidoID", objpe.PedidoID );
+                        cmd.Parameters.AddWithValue("@ClienteID", objpe.ClienteID);
+                        cmd.Parameters.AddWithValue("@FechaPedido", objpe.FechaPedido == default(DateTime) ? (object)DBNull.Value : objpe.FechaPedido);
+                        cmd.Parameters.AddWithValue("@Estado", string.IsNullOrEmpty(objpe.Estado) ? (object)DBNull.Value : objpe.Estado);
+                        cmd.Parameters.AddWithValue("@Total", objpe.Total == 0 ? (object)DBNull.Value : objpe.Total);
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            if (reader.Read())
+                            
+
+                            while (reader.Read())
                             {
-                                pedido = new Pedido
+                                Pedido pedi = new Pedido
                                 {
-                                    PedidoID = reader.GetInt32(0),
-                                    ClienteID = reader.GetInt32(1),
-                                    FechaPedido = reader.GetDateTime(2),
-                                    Estado = reader.GetString(3),
-                                    Total = reader.GetDecimal(4)
+                                    PedidoID = Convert.ToInt32(reader["PedidoID"]),
+                                    ClienteID = Convert.ToInt32(reader["ClienteID"]),
+                                    FechaPedido = Convert.ToDateTime(reader["FechaPedido"]),
+                                    Estado = reader["Estado"].ToString(),
+                                    Total = Convert.ToDecimal(reader["Total"])
                                 };
+                                lista.Add(pedi);
                             }
                         }
                     }
                 }
+
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("OperacionesLecturaPedido - Error:" + ex.ToString());
+                Debug.WriteLine("OperacioneLectura -Eror" + ex.ToString());
             }
-            return pedido;
-        }
-        public int OperacionesEscrituraDetallePedido(string indicador, DetallePedido objDetallePedido)
-        {
-            int procesar = -1;
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["cnx"].ConnectionString))
-                {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("usp_detalle_pedido_crud", conn))
-                    {
-                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                        cmd.Parameters.Clear();
-                        cmd.Parameters.AddWithValue("@indicador", indicador);
-                        cmd.Parameters.AddWithValue("@DetallePedidoID", objDetallePedido.DetallePedidoID);
-                        cmd.Parameters.AddWithValue("@PedidoID", objDetallePedido.PedidoID);
-                        cmd.Parameters.AddWithValue("@ProductoID", objDetallePedido.ProductoID);
-                        cmd.Parameters.AddWithValue("@Cantidad", objDetallePedido.Cantidad);
-                        cmd.Parameters.AddWithValue("@PrecioUnitario", objDetallePedido.PrecioUnitario);
-                        cmd.Parameters.AddWithValue("@Subtotal", objDetallePedido.Subtotal);
-                        procesar = cmd.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("OperacionesEscrituraDetallePedido - Error: " + ex.ToString());
-            }
-            return procesar;
+
+            return lista;
         }
     }
-
-       
-
-    }
+}

@@ -12,6 +12,6 @@ namespace Proyectommstore.Dao
     internal interface ICompraService
     {
         Productos GetProductoPorId(int id);
-        ResultadoOperacion GenerarCompra(int clienteId, List<ItemCompra> itemsCompra);
+        PedidoRespuesta GenerarCompra(int clienteId, List<ItemCompra> itemsCompra);
     }
 }
