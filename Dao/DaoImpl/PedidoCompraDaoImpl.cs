@@ -120,6 +120,7 @@ namespace Proyectommstore.Dao.DaoImpl
                     }
                 }
             }
+
             catch (Exception ex)
             {
                 Debug.WriteLine("OperacionesEscrituraDetallePedido - Error: " + ex.ToString());

@@ -71,7 +71,31 @@ namespace Proyectommstore.Controllers
             return Ok(buscar);
         }
 
-        
+        [HttpPut]
+        [Route("{id}")]
+        public IHttpActionResult Put(int id, Usuarios usuario)
+        {
+            // Validar modelo e ID
+            if (!ModelState.IsValid)
+                return BadRequest("El modelo no es válido.");
+
+            if (id != usuario.UsuarioID)
+                return BadRequest("El ID enviado no coincide con el del usuario.");
+
+            // Cifrar contraseña si se envió una nueva
+            if (!string.IsNullOrEmpty(usuario.password))
+                usuario.password = dao.HashPassword(usuario.password);
+
+            // Intentar actualizar
+            int resultado = dao.operacionesEscitura("editar", usuario);
+
+            if (resultado > 0)
+                return Ok("Usuario actualizado correctamente.");
+            else
+                return Content(HttpStatusCode.NotFound, "No se encontró el usuario para actualizar.");
+        }
+    }
+
 
     }
-}
+

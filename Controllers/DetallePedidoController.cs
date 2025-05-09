@@ -1,37 +1,35 @@
-﻿using Proyectommstore.Dao.DaoImpl;
-using Proyectommstore.Dao;
+﻿using Proyectommstore.Dao;
+using Proyectommstore.Dao.DaoImpl;
 using Proyectommstore.Models;
+using ProyectommStrore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using ProyectommStrore.Models;
 
 namespace Proyectommstore.Controllers
 {
-
-    [RoutePrefix("api/pedido")]
-    public class PedidoController : ApiController
+    [RoutePrefix("api/detalle")]
+    public class DetallePedidoController : ApiController
     {
-        PedidoDao dao = new PedidoDaoImpl();
+
+        DetalleDao  dao = new DetalleDaoImpl();
+
 
         [HttpGet]
-        [Route("getall")]
+        [Route("getall")]   
         public IHttpActionResult Get()
         {
-           
-            var pedidos = dao.operacionesLectura("listar", new Pedido());
-
-            return Ok(pedidos);
+            return Ok(dao.operacionesLectura("listar", new DetallePedido()));
         }
 
         [HttpDelete]
         [Route("{id}")]
         public IHttpActionResult Delete(int id)
         {
-            var delete = dao.operacionesEscritura("eliminar", new Pedido { PedidoID = id });
+            var delete = dao.operacionesEscritura("eliminar", new DetallePedido { DetallePedidoID = id });
 
             return Ok(delete);
 
@@ -41,9 +39,9 @@ namespace Proyectommstore.Controllers
         [Route("{id}")]
         public IHttpActionResult GetId(int id)
         {
-            var buscar = dao.operacionesLectura("buscar", new Pedido { PedidoID = id }).FirstOrDefault();
+            var buscar = dao.operacionesLectura("buscar", new DetallePedido { DetallePedidoID = id }).FirstOrDefault();
             return Ok(buscar);
         }
-
     }
 }
+

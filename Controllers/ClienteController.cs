@@ -48,5 +48,14 @@ namespace Proyectommstore.Controllers
             var buscar = dao.operacionesLectura("buscar", new Clientes { ClienteID = id }).FirstOrDefault();
             return Ok(buscar);
         }
+
+
+        [HttpPut]
+        [Route("editar")]
+        public IHttpActionResult Put(Clientes cli)
+        {
+            var resultado = dao.operacionesEscritura("editar", cli);
+            return Ok(resultado);
+        }
     }
 }
